@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+  <html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收益與管理費分配計算器</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      input, button {
+        width: 100%;
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+      }
+      .result {
+        background-color: #f4f4f4;
+        padding: 10px;
+        margin-top: 20px;
+        border-radius: 5px;
+      }
+      .final-amount {
+        color: red;
+        font-weight: bold;
+      }
+      .formula {
+        font-size: 14px;
+        color: #555;
+        background-color: #eef;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>收益與管理費分配計算器</h1>
+      <label for="totalIncome">總收益：</label>
+      <input type="number" id="totalIncome" placeholder="輸入總收益" required>
+      
+      <label for="totalExpense">總支出：</label>
+      <input type="number" id="totalExpense" placeholder="輸入總支出" required>
+      
+      <button onclick="calculate()">計算</button>
+      <button onclick="reset()">重新計算</button>
+      
+      <div class="result" id="result">
+        <p>計算結果將顯示在這裡...</p>
+      </div>
+    </div>
+    
+    <script>
+      function calculate() {
+        // 獲取輸入值
+        const totalIncome = parseFloat(document.getElementById('totalIncome').value);
+        const totalExpense = parseFloat(document.getElementById('totalExpense').value);
+        
+        if (isNaN(totalIncome) || isNaN(totalExpense)) {
+          alert('請輸入有效的數字作為收益和支出。');
+          return;
+        }
+
+        // 計算淨收益
+        const netIncome = totalIncome - totalExpense;
+
+        // 管理費總額
+        const managementFee = 3000;
+
+        // 分擔比例
+        const auntUsageRatio = 0.65; // Aunt 使用比例
+        const williamUsageRatio = 0.35; // William 使用比例
+
+        // 管理費分擔
+        const auntFeeShare = managementFee * auntUsageRatio;
+        const williamFeeShare = managementFee * williamUsageRatio;
+
+        // 收益分配邏輯
+        const halfNetIncome = netIncome / 2; // 淨收益的一半
+        const williamShare = (halfNetIncome * 3) / 7; // 淨收益一半的七分之三
+        const yourShare = (halfNetIncome * 4) / 7; // 淨收益一半的七分之四
+
+        // Aunt 的最終所得
+        const finalAunt = halfNetIncome - auntFeeShare;
+
+        // William 的最終所得
+        const finalWilliam = williamShare - williamFeeShare;
+
+        // 你的最終所得
+        const finalYourShare = yourShare + managementFee;
+
+        // 顯示結果
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `
+          <h3>計算結果：</h3>
+          <p><strong>總淨收益：</strong> ${netIncome.toFixed(2)} 元</p>
+          <div class="formula">
+            <p>總淨收益計算公式：</p>
+            <p>總淨收益 = 總收益 - 總支出</p>
+            <p>= ${totalIncome.toFixed(2)} - ${totalExpense.toFixed(2)} = ${netIncome.toFixed(2)} 元</p>
+          </div>
+          <hr>
+          <p><strong>管理費分配：</strong></p>
+          <ul>
+            <li>Aunt 負擔比例：${(auntUsageRatio * 100).toFixed(2)}% (${auntFeeShare.toFixed(2)} 元)</li>
+            <li>William 負擔比例：${(williamUsageRatio * 100).toFixed(2)}% (${williamFeeShare.toFixed(2)} 元)</li>
+          </ul>
+          <div class="formula">
+            <p>管理費計算公式：</p>
+            <p>Aunt 的管理費分擔 = 總管理費 × Aunt 使用比例 = ${managementFee} × ${auntUsageRatio} = ${auntFeeShare.toFixed(2)} 元</p>
+            <p>William 的管理費分擔 = 總管理費 × William 使用比例 = ${managementFee} × ${williamUsageRatio} = ${williamFeeShare.toFixed(2)} 元</p>
+          </div>
+          <hr>
+          <p><strong>Aunt 的分配：</strong></p>
+          <ul>
+            <li>淨收益的一半：${halfNetIncome.toFixed(2)} 元</li>
+            <li>負擔管理費：${auntFeeShare.toFixed(2)} 元</li>
+            <li>最終所得：<span class="final-amount">${finalAunt.toFixed(2)}</span> 元</li>
+          </ul>
+          <div class="formula">
+            <p>Aunt 的最終收益公式：</p>
+            <p>Aunt 的最終收益 = 淨收益的一半 - 管理費分擔</p>
+            <p>= ${halfNetIncome.toFixed(2)} - ${auntFeeShare.toFixed(2)} = ${finalAunt.toFixed(2)} 元</p>
+          </div>
+          <hr>
+          <p><strong>William 的分配：</strong></p>
+          <ul>
+            <li>淨收益一半的七分之三：${williamShare.toFixed(2)} 元</li>
+            <li>負擔管理費：${williamFeeShare.toFixed(2)} 元</li>
+            <li>最終所得：<span class="final-amount">${finalWilliam.toFixed(2)}</span> 元</li>
+          </ul>
+          <div class="formula">
+            <p>William 的最終收益公式：</p>
+            <p>William 的最終收益 = (淨收益的一半 × 3/7) - 管理費分擔</p>
+            <p>= (${halfNetIncome.toFixed(2)} × 3/7) - ${williamFeeShare.toFixed(2)} = ${finalWilliam.toFixed(2)} 元</p>
+          </div>
+          <hr>
+          <p><strong>你的分配：</strong></p>
+          <ul>
+            <li>淨收益一半的七分之四：${yourShare.toFixed(2)} 元</li>
+            <li>收到管理費：${managementFee.toFixed(2)} 元</li>
+            <li>最終所得：<span class="final-amount">${finalYourShare.toFixed(2)}</span> 元</li>
+          </ul>
+          <div class="formula">
+            <p>你的最終收益公式：</p>
+            <p>你的最終收益 = (淨收益的一半 × 4/7) + 收到的管理費</p>
+            <p>= (${halfNetIncome.toFixed(2)} × 4/7) + ${managementFee.toFixed(2)} = ${finalYourShare.toFixed(2)} 元</p>
+          </div>
+        `;
+      }
+
+      function reset() {
+        // 重置輸入欄位和結果顯示
+        document.getElementById('totalIncome').value = '';
+        document.getElementById('totalExpense').value = '';
+        document.getElementById('result').innerHTML = '<p>計算結果將顯示在這裡...</p>';
+      }
+    </script>
+  </body>
+  </html>
